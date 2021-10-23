@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:wsc="http://www.mulesoft.org/schema/mule/wsc"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="2b27b6c7-58aa-47c4-8273-7e92393227e2" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<wsc:config name="Web_Service_Consumer_Config" doc:name="Web Service Consumer Config" doc:id="6643f6f1-334c-4f91-91d2-3160bf6c9d6a" >
+		<wsc:connection wsdlLocation="http://ilt.mulesoft-training.com/essentials/delta?wsdl" service="TicketServiceService" port="TicketServicePort" address="http://ilt.mulesoft-training.com/essentials/delta" />
+	</wsc:config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="f45b4dc7-0025-449f-8be9-69827ec8ea6e" >
+		<http:request-connection host="ilt.mulesoft-training.com" />
+	</http:request-config>
+	<flow name="xyzFlow" doc:id="1a508fd1-f8f3-4b67-8716-94370f314c5a" >
+		<http:listener doc:name="Listener" doc:id="dcd47441-27ab-4cad-9ca4-e24f3c0199fe" config-ref="HTTP_Listener_config" path="xy1"/>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="deb28f0d-5c46-4d31-935d-1cb97a308ad1" >
+			<route >
+				<flow-ref doc:name="Flow Reference" doc:id="99ba6d9f-c4d6-44f5-806b-74b1da696a1b" name="Flow1"/>
+			</route>
+			<route >
+				<flow-ref doc:name="Flow Reference" doc:id="d7d57fb7-f4c0-4766-9c72-c97aa0792a44" name="Flow2"/>
+			</route>
+			<route >
+				<flow-ref doc:name="Flow Reference" doc:id="9d76ffeb-c3bd-4e0d-a013-4ae91c6e9611" name="Flow3"/>
+			</route>
+		</scatter-gather>
+		<ee:transform doc:name="Transform Message" doc:id="efc1d92d-e1d4-44cf-9daa-bcfbed5c02e4" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+flatten(payload..payload)
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="Flow1" doc:id="fc908eea-3aac-4055-bf14-602499e44f84" >
+		<ee:transform doc:name="Transform Message" doc:id="01750331-760a-4383-abb4-26210b5ddf2e" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	add: 20+10
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="Flow2" doc:id="d25bf825-d7d4-4fb2-97bd-0d18ad55f2aa" >
+		<ee:transform doc:name="Transform Message" doc:id="607419ee-142a-43a5-9d82-d5ffe1ed0db9" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	subtract:	20-10
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+	<flow name="Flow3" doc:id="a7081765-d89c-439b-a910-3703ea1788aa" >
+		<ee:transform doc:name="Transform Message" doc:id="f416cbb2-32dc-4630-926f-0ddf52c40a4b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	multiply: 20*10
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

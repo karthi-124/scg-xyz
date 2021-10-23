@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_d25bf825_d7d4_4fb2_97bd_0d18ad55f2aa_Output_Payload = {| subtract: Number |}
+
